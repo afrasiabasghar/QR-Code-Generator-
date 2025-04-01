@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <!-- Include QRCode.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #00ffcc, #ff33cc); /* Cyan to Neon Pink */
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 1s ease-in-out;
+            border: 2px solid #ffcc00; /* Sunny Yellow border */
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-size: 2rem;
+            color: #ff33cc; /* Neon Pink */
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: glow 2s infinite;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px #ff33cc, 0 0 20px #ff33cc; }
+            50% { text-shadow: 0 0 20px #ff33cc, 0 0 30px #00ffcc; }
+            100% { text-shadow: 0 0 10px #ff33cc, 0 0 20px #ff33cc; }
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            font-size: 1.2rem;
+            color: #00ffcc; /* Cyan */
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .input-section input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ffcc00; /* Sunny Yellow */
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            background: #fff;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-section input:focus {
+            border: 2px solid #ff33cc; /* Neon Pink */
+            box-shadow: 0 0 10px rgba(255, 51, 204, 0.5);
+        }
+
+        .generate-btn {
+            background: #ffcc00; /* Sunny Yellow */
+            color: #00ffcc; /* Cyan */
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .generate-btn:hover {
+            background: #ff33cc; /* Neon Pink */
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 51, 204, 0.5);
+        }
+
+        .qr-code {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 51, 204, 0.1); /* Light Neon Pink background */
+            border-radius: 15px;
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+            border: 1px solid #ffcc00; /* Sunny Yellow border */
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .download-btn {
+            background: #00ffcc; /* Cyan */
+            color: #ff33cc; /* Neon Pink */
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: #ffcc00; /* Sunny Yellow */
+            color: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+        }
+
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Background Particles for Visual Appeal */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 204, 0, 0.7); /* Sunny Yellow particles */
+            border-radius: 50%;
+            animation: float 10s infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .input-section label {
+                font-size: 1rem;
+            }
+
+            .generate-btn, .download-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .qr-code img {
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="container">
+        <h1 class="title">QR Code Generator</h1>
+        <div class="input-section">
+            <label>Enter Text or URL:</label>
+            <input type="text" id="qrInput" placeholder="e.g., https://example.com">
+        </div>
+        <button class="generate-btn" onclick="generateQRCode()">Generate QR Code</button>
+        <div class="qr-code" id="qrCode">
+            <div id="qrCanvas"></div>
+            <a class="download-btn" id="downloadBtn" href="#" download="qrcode.png">Download QR Code</a>
+        </div>
+    </div>
+
+    <script>
+        // Particle Animation
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.width = `${Math.random() * 5 + 2}px`;
+            particle.style.height = particle.style.width;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.animationDelay = `${Math.random() * 10}s`;
+            particlesContainer.appendChild(particle);
+        }
+
+        // QR Code Generation Logic
+        let qrCode = null;
+
+        function generateQRCode() {
+            const qrInput = document.getElementById('qrInput').value;
+            const qrCanvas = document.getElementById('qrCanvas');
+            const qrCodeDiv = document.getElementById('qrCode');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (!qrInput) {
+                alert('Please enter a text or URL to generate a QR code!');
+                return;
+            }
+
+            // Clear previous QR code
+            qrCanvas.innerHTML = '';
+
+            // Generate new QR code
+            qrCode = new QRCode(qrCanvas, {
+                text: qrInput,
+                width: 200,
+                height: 200,
+                colorDark: "#ff33cc", /* Neon Pink */
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Show the QR code with animation
+            qrCodeDiv.style.display = 'block';
+
+            // Update download link
+            setTimeout(() => {
+                const canvas = qrCanvas.querySelector('canvas');
+                if (canvas) {
+                    downloadBtn.href = canvas.toDataURL('image/png');
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
